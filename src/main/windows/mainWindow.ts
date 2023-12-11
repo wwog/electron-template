@@ -23,6 +23,7 @@ export function createMainWindow(url: string) {
     center: true,
     show: false,
     resizable: true,
+    autoHideMenuBar: true,
     webPreferences: {
       preload: servicePreload,
       scrollBounce: true,
@@ -31,7 +32,6 @@ export function createMainWindow(url: string) {
       contextIsolation: false,
       nodeIntegrationInWorker: true,
     },
-    titleBarStyle: 'hidden',
   })
 
   win.once('ready-to-show', () => {
