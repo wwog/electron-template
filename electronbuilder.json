@@ -1,0 +1,17 @@
+{
+  "appId": "com.example.electron-boilerplate",
+  "productName": "Electron Boilerplate",
+  "artifactName": "${productName}-${os}-${arch}-${version}.${ext}",
+  "asar": true,
+
+  "extraFiles": ["extra/files/${os}/**/*", "Locales"],
+  "extraResources": ["extra/resources/${os}/**/*"],
+  "directories": {
+    "app": "release/app",
+    "output": "release/build"
+  },
+
+
+  "DEV__asarUnpack": ["**/*"],
+  "DEV__forceCodeSigning": false
+}

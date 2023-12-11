@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": [
+    "src/common",
+    "src/main",
+    "./package.json",
+    "src/config",
+    "src/preload",
+    "src/renderer/vite-env.d.ts"
+  ]
+}

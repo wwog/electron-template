@@ -1,0 +1,55 @@
+{
+  "name": "electron-app",
+  "version": "0.0.1",
+  "private": true,
+  "description": "template for electron app",
+  "author": {
+    "name": "wwog"
+  },
+  "main": "release/app/dist/main.js",
+  "scripts": {
+    "dev": "node ./scripts/cli.mjs dev",
+    "dev:restart": "node ./scripts/cli.mjs dev --restart",
+    "build": "node ./scripts/cli.mjs build",
+    "pack:dev": "cross-env CONFIG_PREFIX=DEV npm run prepack && electron-builder --dir",
+    "pack:release:mac": "npm run build && npm run _pack:release:mac",
+    "_pack:release:mac": "cross-env CONFIG_PREFIX=PROD npm run prepack && electron-builder --mac",
+    "postinstall": "electron-builder install-app-deps",
+    "prettier": "prettier . --write",
+    "prepare": "panda codegen",
+    "prepack": "node ./scripts/prepack.mjs"
+  },
+  "dependencies": {
+    "ahooks": "^3.7.8",
+    "ansi-styles": "^6.2.1",
+    "antd": "^5.12.1",
+    "axios": "^1.6.2",
+    "electron-store": "^8.1.0",
+    "node-machine-id": "^1.1.12",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-error-boundary": "^4.0.11",
+    "react-intl": "^6.5.5",
+    "react-router-dom": "^6.20.1",
+    "zustand": "^4.4.7"
+  },
+  "devDependencies": {
+    "@pandacss/dev": "^0.20.1",
+    "@types/react": "^18.2.42",
+    "@types/react-dom": "^18.2.17",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "cross-env": "^7.0.3",
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1",
+    "eslint": "^8.55.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "prettier": "^3.1.0",
+    "react-dev-inspector": "^2.0.0",
+    "tsx": "^4.6.2",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.6"
+  }
+}

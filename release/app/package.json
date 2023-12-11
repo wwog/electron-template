@@ -1,0 +1,9 @@
+{
+  "name": "electron-app",
+  "author": {
+    "name": "wwog"
+  },
+  "version": "0.0.1",
+  "description": "template for electron app",
+  "main": "./dist/main.js"
+}
