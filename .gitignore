@@ -25,6 +25,7 @@ dist-ssr
 
 # Release folder
 release/app/dist
+release/app/package-lock.json
 release/build
 
 # config 
