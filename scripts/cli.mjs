@@ -107,6 +107,7 @@ async function buildMain(options) {
                 if (buildCount > 1 && watch) {
                   hooks?.onReBuildEnd?.()
                 }
+                log(`Main Process built successful`)
                 resolve()
               },
             },
@@ -115,7 +116,7 @@ async function buildMain(options) {
       },
     })
   })
-  log(`Main Process built successful`)
+  
   const preloadPromise = new Promise((resolve) => {
     build({
       define,
@@ -143,6 +144,7 @@ async function buildMain(options) {
                 if (buildPayloadCount > 1 && watch) {
                   hooks?.onReBuildEnd?.()
                 }
+                log(`Preload Process built successful`)
                 resolve()
               },
             },
@@ -151,7 +153,7 @@ async function buildMain(options) {
       },
     })
   })
-  log(`Preload Process built successful`)
+  
   await Promise.all([buildPromise, preloadPromise])
 
   return outDir
@@ -203,7 +205,6 @@ async function runDev(restart = false) {
       },
     },
   })
-  log(`Main Process built successful`)
   const outpath = join(paths.distPath, 'main.js')
   electronProcess = electronRun(outpath)
   listeningProcessClose(() => {
