@@ -8,7 +8,10 @@ import { appendDragElement } from '../utils'
 const servicePreload = join(__dirname, 'preload_service.js')
 
 export function createMainWindow(url: string) {
-  const mainWindowBounds = store.get('mainWindowBounds')
+  const mainWindowBounds = store.get('mainWindowBounds', {
+    width: 460,
+    height: 500,
+  })
 
   const win = new BrowserWindow({
     minWidth: 460,
