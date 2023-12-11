@@ -79,75 +79,83 @@ async function buildMain(options) {
     'process.env.DEV_URL': `'${devUrl}'`,
     'process.env.ROOT_PATH': JSON.stringify(paths.rootPath)
   }
-  const result = await build({
-    define,
-    build: {
-      minify,
-      watch,
-      outDir,
-      emptyOutDir: false,
-      sourcemap: sourceMap,
-      rollupOptions: {
-        input: {
-          main: paths.mainEntry,
-        },
-        external: excludeModules,
-        output: {
-          entryFileNames: '[name].js',
-          assetFileNames: 'renderer/assets/[name].[ext]',
-          format: 'commonjs',
-        },
-        plugins: [
-          {
-            name: 'dev-main',
-            closeBundle() {
-              buildCount++
-              if (buildCount > 1 && watch) {
-                hooks?.onReBuildEnd?.()
-              }
-            },
+
+  const buildPromise = new Promise((resolve) => {
+    build({
+      define,
+      build: {
+        minify,
+        watch,
+        outDir,
+        emptyOutDir: false,
+        sourcemap: sourceMap,
+        rollupOptions: {
+          input: {
+            main: paths.mainEntry,
           },
-        ],
-      },
-    },
-  })
-  const preload_result = await build({
-    define,
-    build: {
-      minify,
-      watch,
-      outDir,
-      emptyOutDir: false,
-      sourcemap: sourceMap,
-      rollupOptions: {
-        input: {
-          preload_service: paths.preloadServiceEntry,
-        },
-        external: ['fs', 'path', 'os', 'electron', 'url'],
-        output: {
-          entryFileNames: '[name].js',
-          assetFileNames: 'renderer/assets/[name].[ext]',
-          format: 'commonjs',
-        },
-        plugins: [
-          {
-            name: 'dev-main',
-            closeBundle() {
-              buildPayloadCount++
-              if (buildPayloadCount > 1 && watch) {
-                hooks?.onReBuildEnd?.()
-              }
-            },
+          external: excludeModules,
+          output: {
+            entryFileNames: '[name].js',
+            assetFileNames: 'renderer/assets/[name].[ext]',
+            format: 'commonjs',
           },
-        ],
+          plugins: [
+            {
+              name: 'dev-main',
+              closeBundle() {
+                buildCount++
+                if (buildCount > 1 && watch) {
+                  hooks?.onReBuildEnd?.()
+                }
+                resolve()
+              },
+            },
+          ],
+        },
       },
-    },
+    })
   })
-  return {
-    outDir,
-    result,
-    preload_result,
-  }
+  log(`Main Process built successful`)
+  const preloadPromise = new Promise((resolve) => {
+    build({
+      define,
+      build: {
+        minify,
+        watch,
+        outDir,
+        emptyOutDir: false,
+        sourcemap: sourceMap,
+        rollupOptions: {
+          input: {
+            preload_service: paths.preloadServiceEntry,
+          },
+          external: ['fs', 'path', 'os', 'electron', 'url'],
+          output: {
+            entryFileNames: '[name].js',
+            assetFileNames: 'renderer/assets/[name].[ext]',
+            format: 'commonjs',
+          },
+          plugins: [
+            {
+              name: 'dev-preload',
+              closeBundle() {
+                buildPayloadCount++
+                if (buildPayloadCount > 1 && watch) {
+                  hooks?.onReBuildEnd?.()
+                }
+                resolve()
+              },
+            },
+          ],
+        },
+      },
+    })
+  })
+  log(`Preload Process built successful`)
+  await Promise.all([buildPromise, preloadPromise])
+
+  return outDir
+   
 }
 
 function electronRun(mainPath) {
@@ -335,6 +343,9 @@ function listeningProcessClose(call) {
     realCall()
   })
   process.once('beforeExit', () => {
+    realCall()
+  })
+  process.once('SIGTERM', () => {
     realCall()
   })
 }
