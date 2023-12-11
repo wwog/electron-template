@@ -70,17 +70,17 @@ async function buildMain(options) {
     sourceMap = isDev,
     outDir = paths.distPath,
   } = options ?? {}
-
   const envStr = isDev ? 'development' : 'production'
   let buildCount = 0
   let buildPayloadCount = 0
+  const define =  {
+    'process.env.NODE_ENV': `'${envStr}'`,
+    'process.env.DEBUG': `'${isDebug}'`,
+    'process.env.DEV_URL': `'${devUrl}'`,
+    'process.env.ROOT_PATH': JSON.stringify(paths.rootPath)
+  }
   const result = await build({
-    define: {
-      'process.env.NODE_ENV': `'${envStr}'`,
-      'process.env.DEBUG': `'${isDebug}'`,
-      'process.env.DEV_URL': `'${devUrl}'`,
-      'process.env.ROOT_PATH': `'${paths.rootPath}'`,
-    },
+    define,
     build: {
       minify,
       watch,
@@ -112,11 +112,7 @@ async function buildMain(options) {
     },
   })
   const preload_result = await build({
-    define: {
-      'process.env.NODE_ENV': `'${envStr}'`,
-      'process.env.DEBUG': `'${isDebug}'`,
-      'process.env.DEV_URL': `'${devUrl}'`,
-    },
+    define,
     build: {
       minify,
       watch,
