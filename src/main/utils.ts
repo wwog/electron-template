@@ -5,7 +5,6 @@ import { URL } from 'url'
 import pkg from '../../package.json'
 import { formatLocal } from '../common/format'
 import { DefaultLang } from '../config'
-import { warn } from './log'
 
 const isDev = process.env.NODE_ENV === 'development'
 const isDebug = process.env.DEBUG === 'true'
@@ -68,33 +67,26 @@ export function getLocal() {
   return formatLocal(lang)
 }
 
-export function appendDragElement(webContents: WebContents) {
-  let titleBarHeight = 40
-  switch (process.platform) {
-    case 'darwin':
-      titleBarHeight = 22
-      break
-    case 'win32':
-      titleBarHeight = 40
-      break
-    default:
-      warn('Unknown platform: title bar height is set to 40px, please check this is correct')
-      break
+
+export function appendLoadFailedPage(webContents: WebContents) {
+  const currentUrl = webContents.getURL()
+  if(isDebug){
+    webContents.openDevTools()
   }
-  webContents.insertCSS(
-    `div#drag_main_process_inset {
-        -webkit-app-region: drag;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: ${titleBarHeight}px;
-        z-index: 999;
-      }`,
-  )
-  webContents.executeJavaScript(
-    `const div = document.createElement('div');
-      div.id = 'drag_main_process_inset';
-      document.body.appendChild(div);`,
-  )
+  webContents.executeJavaScript(`
+    const div = document.createElement('div')
+    div.style.width = '100vw'
+    div.style.height = '100vh'
+    div.style.display = 'flex'
+    div.style.justifyContent = 'center'
+    div.style.alignItems = 'center'
+    div.style.flexDirection = 'column'
+    div.style.fontSize = '20px'
+    div.style.color = '#000'
+    div.style.fontWeight = 'bold'
+    div.style.fontFamily = 'sans-serif'
+    div.style.background = '#fff'
+    div.innerHTML = '${currentUrl} load failed,pelease contact admin'
+    document.body.appendChild(div)
+  `)
 }

@@ -2,8 +2,8 @@ import { BrowserWindow } from 'electron'
 import { join } from 'path'
 import { debounce } from '../../common'
 import { store } from '../../common/store'
-import { log } from '../log'
-import { appendDragElement } from '../utils'
+import { err, log } from '../log'
+import { appendLoadFailedPage } from '../utils'
 
 const servicePreload = join(__dirname, 'preload_service.js')
 
@@ -46,9 +46,12 @@ export function createMainWindow(url: string) {
     }),
   )
 
-  win.webContents.once('did-finish-load', () => {
-    appendDragElement(win.webContents)
+  win.webContents.on('did-fail-load', () => {
+    err('Main window failed to load')
+    appendLoadFailedPage(win.webContents)
   })
+
+  win.webContents.once('did-finish-load', () => {})
 
   win.loadURL(url)
   //win.webContents.openDevTools()
