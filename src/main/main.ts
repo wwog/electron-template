@@ -1,12 +1,12 @@
 import { BrowserWindow, app, session, shell } from 'electron'
 import { resolve } from 'path'
 import { initMethods } from './ipcMethods'
+import { MenuBuilder } from './menu'
 import './preInit'
-import { getAllConfig } from './utils'
+import { getAllConfig, resolveHtmlPath } from './utils'
 import { createMainWindow } from './windows/mainWindow'
 
-
-const { appName, isDev, isDebug, rootPath } = getAllConfig()
+const { appName, isDev, isDebug, rootPath,platform } = getAllConfig()
 
 initMethods()
 
@@ -32,7 +32,10 @@ app.whenReady().then(async () => {
       await session.defaultSession.loadExtension(reactDevToolsPath)
     }
   }
-  allWins.main.push(createMainWindow('https://ai.xiabb.chat/'))
+  allWins.main.push(createMainWindow(resolveHtmlPath('index.html')))
+  const menuBuilder = new MenuBuilder(allWins.main[0])
+  menuBuilder.applyMenu()
+
 })
 
 if (app.requestSingleInstanceLock() === false) {
