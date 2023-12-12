@@ -6,7 +6,7 @@ import './preInit'
 import { getAllConfig, resolveHtmlPath } from './utils'
 import { createMainWindow } from './windows/mainWindow'
 
-const { appName, isDev, isDebug, rootPath,platform } = getAllConfig()
+const { appName, isDev, isDebug, rootPath } = getAllConfig()
 
 initMethods()
 
@@ -35,7 +35,6 @@ app.whenReady().then(async () => {
   allWins.main.push(createMainWindow(resolveHtmlPath('index.html')))
   const menuBuilder = new MenuBuilder(allWins.main[0])
   menuBuilder.applyMenu()
-
 })
 
 if (app.requestSingleInstanceLock() === false) {

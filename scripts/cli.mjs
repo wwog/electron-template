@@ -73,31 +73,50 @@ async function buildMain(options) {
   const envStr = isDev ? 'development' : 'production'
   let buildCount = 0
   let buildPayloadCount = 0
-  const define =  {
+  const define = {
     'process.env.NODE_ENV': `'${envStr}'`,
     'process.env.DEBUG': `'${isDebug}'`,
     'process.env.DEV_URL': `'${devUrl}'`,
-    'process.env.ROOT_PATH': JSON.stringify(paths.rootPath)
+    'process.env.ROOT_PATH': JSON.stringify(paths.rootPath),
+  }
+  /**
+   * @type {import('vite').InlineConfig}
+   */
+  const buildConfig = {
+    define,
+    base: './',
+    build: {
+      assetsInlineLimit: 0,
+      minify,
+      watch,
+      outDir,
+      emptyOutDir: false,
+      sourcemap: sourceMap,
+      rollupOptions: {
+        output: {
+          entryFileNames: '[name].js',
+          assetFileNames: 'renderer/assets/[name].[ext]',
+          format: 'commonjs',
+          manualChunks: (id) => {
+            if (id.includes('node_modules')) {
+              return 'vendor'
+            }
+          },
+        },
+        external: excludeModules,
+      },
+    },
   }
 
   const buildPromise = new Promise((resolve) => {
     build({
-      define,
+      ...buildConfig,
       build: {
-        minify,
-        watch,
-        outDir,
-        emptyOutDir: false,
-        sourcemap: sourceMap,
+        ...buildConfig.build,
         rollupOptions: {
+          ...buildConfig.build.rollupOptions,
           input: {
             main: paths.mainEntry,
-          },
-          external: excludeModules,
-          output: {
-            entryFileNames: '[name].js',
-            assetFileNames: 'renderer/assets/[name].[ext]',
-            format: 'commonjs',
           },
           plugins: [
             {
@@ -116,25 +135,15 @@ async function buildMain(options) {
       },
     })
   })
-  
   const preloadPromise = new Promise((resolve) => {
     build({
-      define,
+      ...buildConfig,
       build: {
-        minify,
-        watch,
-        outDir,
-        emptyOutDir: false,
-        sourcemap: sourceMap,
+        ...buildConfig.build,
         rollupOptions: {
+          ...buildConfig.build.rollupOptions,
           input: {
             preload_service: paths.preloadServiceEntry,
-          },
-          external: ['fs', 'path', 'os', 'electron', 'url'],
-          output: {
-            entryFileNames: '[name].js',
-            assetFileNames: 'renderer/assets/[name].[ext]',
-            format: 'commonjs',
           },
           plugins: [
             {
@@ -153,11 +162,10 @@ async function buildMain(options) {
       },
     })
   })
-  
+
   await Promise.all([buildPromise, preloadPromise])
 
   return outDir
-   
 }
 
 function electronRun(mainPath) {

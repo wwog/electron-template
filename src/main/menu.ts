@@ -1,5 +1,5 @@
 import { BrowserWindow, Menu, MenuItemConstructorOptions, Tray, app } from 'electron'
-
+//import appLogo from '../assets/main/app_logo.png'
 
 export class MenuBuilder {
   window: BrowserWindow
@@ -7,7 +7,7 @@ export class MenuBuilder {
 
   constructor(window: BrowserWindow) {
     this.window = window
-
+  //  this.tray = new Tray(appLogo)
   }
 
   buildMenu() {
@@ -44,7 +44,7 @@ export class MenuBuilder {
     if (process.platform === 'darwin') {
       const menu = this.buildMenu()
       Menu.setApplicationMenu(menu)
-    } else {
+    } else if (process.platform === 'win32') {
       /*  */
     }
   }

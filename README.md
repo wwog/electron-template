@@ -27,10 +27,24 @@ The project uses json as the configuration, which provides a more flexible packa
 "pack:dev": No installation package is generated, and the asar is unpacked
 ```
 
-## 5.Project Technology stack
+## 5.Project usage library
 
 css: pandaCss
+
+store: electron-store
 
 ## 6.Coding
 
 1. The preInit script located in the main process or the rendering process is used to perform some initialization operations. Do not execute code directly in the rest of the import script to avoid flow errors. For example, Preinit of the main process has a crash listener, which should be initialized as soon as possible, otherwise the previous problem will not be caught
+
+
+## 7.Resource
+
+### Image
+`image` is located under the `assets` folder. uses vite to import resources. The resources used by the main process need to be placed in `assets/main`, for reasons explained later, and then the path is introduced in the form of the relative path `@assets/main/{file}`. 
+ 
+> Because electron has its own processing of multiples, for example, logo.png and logo@2x.png are in the same directory, electron will use high-magnples on high-DPI devices. [NativeImage - Electron Doc] (https://www.electronjs.org/zh/docs/latest/api/native-image). So being in the build script will export the `assets/main` directory to the production folder.
+
+## 8.known issue
+
+1. When building js files with Vitess, there is a problem, and it is not recommended to use restart (hot restart) for development because the vendor or chunk is rebuilt every time and does not cache or have the preBuilt function during development. There is a dll plugin for webpack here, and the relevant plugins for Vite are yet to be investigated. If not, consider writing the relevant functions manually if the main process builds slowly.
