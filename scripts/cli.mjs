@@ -85,7 +85,7 @@ async function buildMain(options) {
   const buildConfig = {
     define,
     base: './',
-    plugins: [],
+    plugins: [splitVendorChunkPlugin()],
     optimizeDeps: {
       disabled: false,
     },
@@ -324,7 +324,7 @@ async function runBuild() {
     isDebug,
     minify,
     sourceMap,
-    outDir: paths.releaseAppDistPath,
+    outDir: paths.releaseMainPath,
     clean: false,
   })
 }

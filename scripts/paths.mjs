@@ -15,6 +15,7 @@ const releaseAppPath = resolve(releasePath, 'app')
 const releaseAppDistPath = resolve(releaseAppPath, 'dist')
 const appPkgPath = resolve(releaseAppPath, 'package.json')
 const releaseRendererPath = resolve(releaseAppDistPath, 'renderer')
+const releaseMainPath = resolve(releaseAppDistPath, 'main')
 
 const mainPath = resolve(srcPath, 'main')
 const preloadPath = resolve(srcPath, 'preload')
@@ -33,6 +34,7 @@ export const paths = {
   releaseAppPath,
   releasePath,
   releaseRendererPath,
+  releaseMainPath,
   releaseAppDistPath,
   appPkgPath,
   preloadServiceEntry,
