@@ -85,7 +85,14 @@ async function buildMain(options) {
   const buildConfig = {
     define,
     base: './',
+    plugins: [],
+    optimizeDeps: {
+      disabled: false,
+    },
     build: {
+      commonjsOptions: {
+        include: [],
+      },
       assetsInlineLimit: 0,
       minify,
       watch,
@@ -97,11 +104,6 @@ async function buildMain(options) {
           entryFileNames: '[name].js',
           assetFileNames: 'renderer/assets/[name].[ext]',
           format: 'commonjs',
-          manualChunks: (id) => {
-            if (id.includes('node_modules')) {
-              return 'vendor'
-            }
-          },
         },
         external: excludeModules,
       },
@@ -111,6 +113,7 @@ async function buildMain(options) {
   const buildPromise = new Promise((resolve) => {
     build({
       ...buildConfig,
+      cacheDir: 'node_modules/.vite/main',
       build: {
         ...buildConfig.build,
         rollupOptions: {
@@ -138,6 +141,7 @@ async function buildMain(options) {
   const preloadPromise = new Promise((resolve) => {
     build({
       ...buildConfig,
+      cacheDir: 'node_modules/.vite/main-preload',
       build: {
         ...buildConfig.build,
         rollupOptions: {
@@ -310,7 +314,7 @@ async function runBuild() {
     log('update releaseAppPackageJson', newAppPkg)
     writeFileSync(paths.appPkgPath, JSON.stringify(newAppPkg, null, 2))
   }
-  await buildRenderer()
+  // await buildRenderer()
   await buildMain({
     isDev,
     isDebug,
