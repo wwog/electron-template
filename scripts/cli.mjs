@@ -261,6 +261,7 @@ async function buildRenderer() {
     plugins: [splitVendorChunkPlugin()],
     optimizeDeps: {
       exclude: excludeModules,
+      disabled: false,
     },
     resolve: {
       alias: {
@@ -269,6 +270,9 @@ async function buildRenderer() {
       },
     },
     build: {
+      commonjsOptions: {
+        include: [],
+      },
       outDir: paths.releaseRendererPath,
       emptyOutDir: false,
       sourcemap: sourceMap,
@@ -314,7 +318,7 @@ async function runBuild() {
     log('update releaseAppPackageJson', newAppPkg)
     writeFileSync(paths.appPkgPath, JSON.stringify(newAppPkg, null, 2))
   }
-  // await buildRenderer()
+  await buildRenderer()
   await buildMain({
     isDev,
     isDebug,
