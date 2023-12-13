@@ -39,9 +39,8 @@ Refer to the [two package.json structure](https://www.electron.build/tutorials/t
   - preload/ Preload script
   - renderer/ Rendering process code
 
-### Deep Build
 
-#### Resources
+### Resources
 
 `assets` stores resource files. The introduction of the main process and the rendering process are currently distinguished. Because `electron` will automatically import multiple images, if `vite` imports pictures, it will not write unquoted files to the build directory, so a `main` folder is added in `assets`. This folder will be copied and moved in full, and standard images and multiple images are placed together for some built-in functions. There will be a slight redundancy. Do not place extra files in the `assets/main` folder.
 
