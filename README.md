@@ -1,3 +1,5 @@
+[中文](./docs/README_zh.md)
+
 # Electron - React - Vite - Template
 
 A stubborn project template. It provides faster packaging and more convenient debugging.
@@ -22,7 +24,6 @@ Please edit `electronbuilder.json`, it provides more flexible packaging, and you
 Refer to the extraFiles and extraResources in the [electronBuilder configuration](./electronbuilder.json) to add resources to the corresponding directory.
 
 Example: Suppose there is a dll file that needs to be attached to the root directory when packaging windows // Just place it in /extra/files/win32. The same applies to others.
-
 
 ### Adding NativeModule
 
