@@ -1,50 +1,50 @@
-## 1.add extra files
+# Electron - React - Vite - Template
 
-`extra` folder corresponding to the `electron-builder` files and `resources`. Copy files to the root directory and `resources` to `resources`
+A stubborn project template. It provides faster packaging and more convenient debugging.
 
-## 2.Debug
+To ensure extensibility, the project is driven by scripts (scripts/cli.mjs). You can add custom features according to your needs.
 
-1. `main` - Break points are placed directly in the code in the main directory ，Use vscode directly f5
-2. `renderer`
-   - Use devTools
-   - react-dev-inspector is used to locate source code
-   - reactDevTools It is enabled by default at development time. If it does not appear, refresh the console
+## Template Usage
 
-## 3.Electron Builder
+### Debugging
 
-### 1.Config
+1. `main process` code - You can set breakpoints in VS Code.
+2. `renderer process` code, provides more debugging methods
+   - Use `devtools`, and load `react-dev-tools` locally. If it does not appear, please refresh the console and restart.
+   - Use `react-dev-inspector`, you can locate the source code through elements.
 
-The project uses json as the configuration, which provides a more flexible packaging, and you can add DEV before the property name to make different configurations for different environments.
+### Electron-Builder Configuration
 
-> configFile: `electronBuilder.json`
+Please edit `electronbuilder.json`, it provides more flexible packaging, and you can add a prefix to the property name to configure differently for different environments.
 
-## 4.scripts
+### Adding Extra Files
 
-```
-"dev": No main process and preload hot reload
-"dev:restart": Main process and preload hot reload
-"build": build Main,Renderer,preload to release/app/dist
-"pack:dev": No installation package is generated, and the asar is unpacked
-```
+Refer to the extraFiles and extraResources in the [electronBuilder configuration](./electronbuilder.json) to add resources to the corresponding directory.
 
-## 5.Project usage library
-
-css: pandaCss
-
-store: electron-store
-
-## 6.Coding
-
-1. The preInit script located in the main process or the rendering process is used to perform some initialization operations. Do not execute code directly in the rest of the import script to avoid flow errors. For example, Preinit of the main process has a crash listener, which should be initialized as soon as possible, otherwise the previous problem will not be caught
+Example: Suppose there is a dll file that needs to be attached to the root directory when packaging windows // Just place it in /extra/files/win32. The same applies to others.
 
 
-## 7.Resource
+### Adding NativeModule
 
-### Image
-`image` is located under the `assets` folder. uses vite to import resources. The resources used by the main process need to be placed in `assets/main`, for reasons explained later, and then the path is introduced in the form of the relative path `@assets/main/{file}`. 
- 
-> Because electron has its own processing of multiples, for example, logo.png and logo@2x.png are in the same directory, electron will use high-magnples on high-DPI devices. [NativeImage - Electron Doc] (https://www.electronjs.org/zh/docs/latest/api/native-image). So being in the build script will export the `assets/main` directory to the production folder.
+Refer to the [two package.json structure](https://www.electron.build/tutorials/two-package-structure) document.
 
-## 8.known issue
+### Directory Structure
 
-1. When building js files with Vitess, there is a problem, and it is not recommended to use restart (hot restart) for development because the vendor or chunk is rebuilt every time and does not cache or have the preBuilt function during development. There is a dll plugin for webpack here, and the relevant plugins for Vite are yet to be investigated. If not, consider writing the relevant functions manually if the main process builds slowly.
+- src/
+  - assets/ Resource files
+  - common/ Can place code that all processes can access
+  - config/ Similar to common general configuration, for private configuration you can use env, refer to the vite document
+  - main/ Main process code
+  - preload/ Preload script
+  - renderer/ Rendering process code
+
+### Deep Build
+
+#### Resources
+
+`assets` stores resource files. The introduction of the main process and the rendering process are currently distinguished. Because `electron` will automatically import multiple images, if `vite` imports pictures, it will not write unquoted files to the build directory, so a `main` folder is added in `assets`. This folder will be copied and moved in full, and standard images and multiple images are placed together for some built-in functions. There will be a slight redundancy. Do not place extra files in the `assets/main` folder.
+
+## TODO
+
+1. Configuration for reducing code build
+2. Dynamically load multiple languages.
