@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-//todo 回调
-
 export type AsyncQueueErrorType = 'timeout' | 'error' | 'immediateExecuteError' | 'cancel'
 
 export interface AsyncQueueError {
@@ -52,7 +50,6 @@ export interface TaskOptions {
    * @default AsyncQueueOption.immediate
    */
   immediate?: boolean
-  onExecNextTask?: () => void
 }
 
 export type InnerTaskObject<R> = Required<PatrialInnerTaskObject<R>>
@@ -229,6 +226,9 @@ export class AsyncQueue<R> {
    * @ It should still run in the queue instead of being forcibly canceled, which would exit the queue.
    */
   public forceCancel(key: string) {
+    console.warn(
+      `[AsyncQueue] calling forceCancel("${key}")  This task is not completed sequentially`,
+    )
     let found = false
     while (!found) {
       const index = this.innerTaskObjects.findIndex((item) => item.key === key)
@@ -266,7 +266,6 @@ export class AsyncQueue<R> {
 const asyncQueue = new AsyncQueue({
   timeout: 6_000,
   timeoutMessage: 'timeout for async queue task lala',
-  immediate: false,
 })
 
 const task1 = () => {
@@ -320,9 +319,7 @@ asyncQueue
 console.log('task1 added')
 
 asyncQueue
-  .addTask(task2, {
-    immediate: true,
-  })
+  .addTask(task2)
   .then((res) => {
     console.log(res, '- success')
   })
