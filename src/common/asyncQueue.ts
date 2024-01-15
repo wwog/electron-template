@@ -5,13 +5,13 @@ export type AsyncQueueErrorType = 'timeout' | 'error' | 'immediateExecuteError' 
 export interface AsyncQueueError {
   message?: string
   type?: AsyncQueueErrorType
-  taskObject?: PatrialInnerTaskObject<any>
+  taskObject?: PartialInnerTaskObject<any>
   reason?: any
 }
 
-export interface PatrialInnerTaskObject<R> {
+export interface PartialInnerTaskObject<R> {
   /**
-   * @default '__nokey__'
+   * @default '__no_key__'
    */
   key: string
   timestamp: number
@@ -52,16 +52,17 @@ export interface TaskOptions {
   immediate?: boolean
 }
 
-export type InnerTaskObject<R> = Required<PatrialInnerTaskObject<R>>
+
+export type InnerTaskObject<R> = Required<PartialInnerTaskObject<R>>
 
 export class TaskError {
-  taskObject?: PatrialInnerTaskObject<any>
+  taskObject?: PartialInnerTaskObject<any>
   type?: AsyncQueueErrorType
   reason?: any
   message: string
 
   constructor(option: AsyncQueueError) {
-    this.message = option.message ?? 'AyncQueueError'
+    this.message = option.message ?? 'AsyncQueueError'
     this.taskObject = option.taskObject
     this.type = option.type ?? 'error'
     this.reason = option.reason
@@ -174,7 +175,7 @@ export class AsyncQueue<R> {
    * @returns
    */
   public addTask(task: () => Promise<R>, options: TaskOptions = {}) {
-    const { immediate, key = '__nokey__' } = options
+    const { immediate, key = '__no_key__' } = options
 
     // Create a new Promise that will resolve when the task is complete, but its resolution will be delayed until all previous tasks are completed.
     return new Promise<R>((resolve, reject) => {
